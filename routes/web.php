@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SocialiteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
+})->name('root');
+
+Route::get('/home', function () {
+    return view('home');
+})->name('home');
+
+Route::controller(SocialiteController::class)->group(function () {
+    Route::get('/auth/{provider}/redirect', 'redirect')->name('auth.redirect');
+    Route::get('/auth/{provider}/callback', 'callback')->name('auth.callback');
+
+    Route::group(['middleware' => ['auth']], function() {
+        Route::get('/auth/logout', 'logout')->name('auth.logout');
+    });
 });
